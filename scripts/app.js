@@ -242,7 +242,7 @@ function prepare(blob) {
     });
   };
   //Load blob
-  fileReader.readAsArrayBuffer(buffer);
+  fileReader.readAsArrayBuffer(blob);
 }
 
 function filterprep(buffer){
