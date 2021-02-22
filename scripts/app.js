@@ -83,7 +83,7 @@ function visualize(stream) {
   rec_filtered.onComplete = function(recorder, blob) {
       createDownloadLink(blob,recorder.encoding, "filtered")
       //calculate BPM
-  //prepare(blob);
+      prepare(blob);
   }
 
   rec_raw.setOptions({
@@ -180,7 +180,6 @@ function start() {
 }
 
 function createDownloadLink(blob,encoding,raw_or_filtered) {
-  
   var url = URL.createObjectURL(blob);
   var au = document.createElement('audio');
   var li = document.createElement('li');
@@ -218,9 +217,7 @@ navigator.mediaDevices.enumerateDevices()
 .then(start)
 .catch(handleError);
 
-
-
-//starts here
+//BPM starts here
 
 // audio_file.onchange = function() {
 //   var file = this.files[0];
@@ -234,7 +231,21 @@ navigator.mediaDevices.enumerateDevices()
 //   reader.readAsArrayBuffer(file);
 // };
 
-function prepare(buffer) {
+function prepare(blob) {
+  const audioContext = new AudioContext();
+  const fileReader = new FileReader();
+  fileReader.onloadend = () => {
+    let myArrayBuffer = fileReader.result;
+    audioContext.decodeAudioData(myArrayBuffer, (audioBuffer) => {
+      // Do something with audioBuffer
+      filterprep(audioBuffer);
+    });
+  };
+  //Load blob
+  fileReader.readAsArrayBuffer(buffer);
+}
+
+function filterprep(buffer){
   var offlineContext = new OfflineAudioContext(1, buffer.length, buffer.sampleRate);
   var source = offlineContext.createBufferSource();
   source.buffer = buffer;
@@ -354,4 +365,3 @@ function arrayMax(arr) {
   }
   return max;
 }
-
